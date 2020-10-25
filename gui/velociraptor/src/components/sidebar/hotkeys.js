@@ -33,6 +33,13 @@ class SidebarKeyNavigator extends React.Component {
                              };
                              e.preventDefault();
                          },
+                         GOTO_SEARCH: e=>{
+                             console.log(e);
+                             const el = document.getElementById('client-search-bar');
+                             if (el) {
+                                 el.focus();
+                             }
+                         },
                      }}/>
         );
     }
@@ -56,6 +63,6 @@ export const SidebarKeyMap = {
     GOTO_COLLECTIONS: {
         name: "Goto collected artifact",
         sequence: "ctrl+c",
-    }
-
+    },
+    GOTO_SEARCH: "ctrl+shift+/",
 };

@@ -325,7 +325,7 @@ export class EventTableWizard extends React.Component {
                       "Event Monitoring: Select artifacts to collect from label group " + label,
                       ()=>false)}
                   artifacts={this.state.current_table.artifacts}
-                  type="CLIENT_EVENT"
+                  artifactType="CLIENT_EVENT"
                   setArtifacts={this.setArtifacts}/>
 
                 <NewCollectionConfigParameters
@@ -345,6 +345,10 @@ export class EventTableWizard extends React.Component {
                   request={this.prepareRequest()} />
 
                 <NewCollectionLaunch
+                  artifacts={this.state.current_table.artifacts}
+                  paginator={new PaginationBuilder(
+                      "Launch",
+                      "New Collection: Launch collection")}
                   launch={this.launch} />
 
               </StepWizard>
@@ -471,7 +475,7 @@ export class ServerEventTableWizard extends React.Component {
                       "Server Event Monitoring: Select artifacts to collect on the server",
                       ()=>false)}
                   artifacts={this.state.current_table.artifacts}
-                  type="SERVER_EVENT"
+                  artifactType="SERVER_EVENT"
                   setArtifacts={this.setArtifacts}/>
 
                 <NewCollectionConfigParameters
@@ -491,6 +495,10 @@ export class ServerEventTableWizard extends React.Component {
                   request={this.prepareRequest().artifacts} />
 
                 <NewCollectionLaunch
+                  artifacts={this.state.current_table.artifacts}
+                  paginator={new PaginationBuilder(
+                      "Launch",
+                      "New Collection: Launch collection")}
                   launch={this.launch} />
 
               </StepWizard>

@@ -21,11 +21,12 @@ import EventMonitoring from './components/events/events.js';
 import SnackbarProvider from 'react-simple-snackbar';
 import Snackbar from './components/core/snackbar.js';
 import Welcome from './components/welcome/welcome.js';
-
+import KeyboardHelp from './components/core/keyboard-help.js';
 import { UserSettings } from './components/core/user.js';
 
 import { Switch, Route } from "react-router-dom";
 import { Join } from './components/utils/paths.js';
+import { withRouter }  from "react-router-dom";
 
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -71,6 +72,7 @@ class App extends Component {
     setClientSearch = (query) => {
         let now = new Date();
         this.setState({query: query, query_version: now.getTime()});
+        this.props.history.push('/search/' + (query || "all"));
     };
 
     updateCurrentNode = (node) => {
@@ -173,10 +175,10 @@ class App extends Component {
                   <VeloLiveClock className="float-right" />
                   <Snackbar />
                 </Nav>
-              </Navbar>
+              </Navbar><KeyboardHelp />
             </SnackbarProvider></UserSettings>
         );
     };
 }
 
-export default App;
+export default withRouter(App);

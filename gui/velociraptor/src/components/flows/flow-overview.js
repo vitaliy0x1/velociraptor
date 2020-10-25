@@ -7,7 +7,8 @@ import CardDeck from 'react-bootstrap/CardDeck';
 import Card from 'react-bootstrap/Card';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { formatColumns } from "../core/table.js";
+import BootstrapTable from 'react-bootstrap-table-next';
 import _ from 'lodash';
 
 import api from '../core/api-service.js';
@@ -60,12 +61,12 @@ export default class FlowOverview extends React.Component {
         });
     }
 
-    prepareDownload = () => {
-
-    };
-
-    prepareReport = () => {
-
+    prepareDownload = (download_type) => {
+        api.post("v1/CreateDownload", {
+            flow_id: this.props.flow.session_id,
+            client_id: this.props.flow.client_id,
+            download_type: download_type || "",
+        });
     };
 
     state = {
@@ -145,12 +146,12 @@ export default class FlowOverview extends React.Component {
                     <dt className="col-4">Ops/Sec</dt>
                     <dd className="col-8"> {flow.request.ops_per_second || 'Unlimited'} </dd>
                     <dt className="col-4">Timeout</dt>
-                    <dd className="col-8"> {flow.request.timeout || 'Unlimited' } </dd>
+                    <dd className="col-8"> {flow.request.timeout || '600' } seconds</dd>
                     <dt className="col-4">Max Rows</dt>
-                    <dd className="col-8"> {flow.request.max_rows || 'Unlimited'} </dd>
+                    <dd className="col-8"> {flow.request.max_rows || '1m'} rows</dd>
                     <dt className="col-4">Max Mb</dt>
                     <dd className="col-8"> { ((flow.request.max_upload_bytes || 0)
-                                              / 1024 / 1024).toFixed(2) || 'Unlimited' }</dd>
+                                              / 1024 / 1024).toFixed(2) || '1000' } Mb</dd>
                     <br />
                   </dl>
 
@@ -205,37 +206,35 @@ export default class FlowOverview extends React.Component {
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                           <Dropdown.Item
-                            onClick={this.prepareDownload}>
+                            onClick={()=>this.prepareDownload()}>
                             Prepare Download
                           </Dropdown.Item>
                           <Dropdown.Item
-                            onClick={this.prepareReport}>
+                            onClick={()=>this.prepareDownload('report')}>
                             Prepare Collection Report
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     </dd>
-
-                    <dt className="col-4">Available Downloads</dt>
-                    <dd className="col-8">
-                      <table className="table table-stiped table-condensed table-hover table-bordered">
-                        <tbody>
-                          { _.map(available_downloads, function(item, idx) {
-                              return <tr key={idx}>
-                                       <td>
-                                         { item.complete ?
-                                           <a href={item.path}
-                                              rel="noopener noreferrer"
-                                              target="_blank">{item.name}</a> :
-                                           <div>{item.name}</div>
-                                         }
-                                       </td>
-                                       <td>{item.size} Bytes</td>
-                                       <td>{item.date}</td>
-                                     </tr>;
-                          })}
-                        </tbody>
-                      </table>
+                  </dl>
+                  <dl>
+                    <dt>Available Downloads</dt>
+                    <dd>
+                      <BootstrapTable
+                        keyField="name"
+                        condensed
+                        bootstrap4
+                        hover
+                        headerClasses="alert alert-secondary"
+                        bodyClasses="fixed-table-body"
+                        data={available_downloads}
+                        columns={formatColumns(
+                            [{dataField: "name", text: "Name", sort: true,
+                              type: "download"},
+                             {dataField: "size", text: "Size (Mb)", sort: true, type: "mb",
+                              align: 'right'},
+                             {dataField: "date", text: "Date"}])}
+                      />
                     </dd>
                   </dl>
                 </Card.Body>
